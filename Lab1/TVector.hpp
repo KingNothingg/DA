@@ -5,21 +5,21 @@ namespace NStd{
     template<class T>
     class TVector {
     private:
-        unsigned int capacity;
-        unsigned int maxsize;
+        unsigned long long capacity;
+        unsigned long long maxsize;
         T *data;
     public:
-        void Assign(unsigned int n, T elem);
-        T &operator[](const unsigned int &index) const;
+        void Assign(unsigned long long n, T elem);
+        T &operator[](const unsigned long long &index) const;
         void PushBack(T elem);
-        unsigned int Size() const;
+        unsigned long long Size() const;
         TVector();
         TVector(char * str){
 
         }
         TVector(TVector<T> &vec);
-        TVector(unsigned int n);
-        TVector(unsigned int n, T elem);
+        TVector(unsigned long long n);
+        TVector(unsigned long long n, T elem);
         ~TVector();
     };
     template<class T>
@@ -29,16 +29,16 @@ namespace NStd{
         maxsize = vec.maxsize;
     }
     template<class T>
-    T& TVector<T>::operator[](const unsigned int &index) const {
+    T& TVector<T>::operator[](const unsigned long long &index) const {
         return data[index];
     }
     template<class T>
-    void TVector<T>::Assign(const unsigned int n, T elem) {
+    void TVector<T>::Assign(const unsigned long long n, T elem) {
         delete[] data;
         maxsize = n*2;
         data = new T[maxsize];
         capacity = n;
-        for (int i = 0; i < n; i++) {
+        for (long long i = 0; i < n; i++) {
             data[i] = elem;
         }
     }
@@ -51,7 +51,7 @@ namespace NStd{
         if (capacity == maxsize) {
             maxsize = maxsize * 2;
             T* newdata = new T[maxsize];
-            for (int i = 0; i < capacity; ++i) {
+            for (long long i = 0; i < capacity; ++i) {
                 newdata[i] = data[i];
             }
             delete[] data;
@@ -61,7 +61,7 @@ namespace NStd{
         capacity++;
     }
     template<class T>
-    unsigned int TVector<T>::Size() const{
+    unsigned long long TVector<T>::Size() const{
         return capacity;
     }
     template<class T>
@@ -71,13 +71,13 @@ namespace NStd{
         data = 0;
     }
     template<class T>
-    TVector<T>::TVector(const unsigned int n) {
+    TVector<T>::TVector(const unsigned long long n) {
         capacity = n;
         maxsize = n;
         data = new T[capacity];
     }
     template<class T>
-    TVector<T>::TVector(const unsigned int n, T elem) {
+    TVector<T>::TVector(const unsigned long long n, T elem) {
         capacity = n;
         maxsize = n;
         data = new T[capacity];

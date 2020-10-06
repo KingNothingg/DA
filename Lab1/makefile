@@ -1,6 +1,6 @@
 CXX = g++
 CXXFLAGS = -std=c++17 -O3 -Wextra -Wall -Werror -Wno-sign-compare -Wno-unused-result -pedantic
-FILES = main.cpp TPair.hpp TString.hpp TVector.hpp
+FILES = main.cpp
 NAME = solution
 
 all: main.o
