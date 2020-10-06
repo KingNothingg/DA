@@ -4,11 +4,11 @@
 #include <iostream>
 #include <stdio.h>
 #include "TVector.hpp"
+#include <chrono>
 
-
-void CountingSort(NStd::TVector<NStd::TTriplet<NStd::TString, unsigned long long int>> &arr, const unsigned long long size, const int digit) {
+void CountingSort(NStd::TVector<NStd::TTriplet<NStd::TString, unsigned long long int, NStd::TString *>> &arr, const unsigned long long size, const int digit) {
     NStd::TVector<unsigned long long int> count(10,0);
-    NStd::TVector<NStd::TTriplet<NStd::TString, unsigned long long int>> result(arr.Size());
+    NStd::TVector<NStd::TTriplet<NStd::TString, unsigned long long int, NStd::TString *>> result(arr.Size());
     if(arr[0].first[size - digit] < '0' || arr[0].first[size - digit] > '9') {
         return;
     }
@@ -27,34 +27,8 @@ void CountingSort(NStd::TVector<NStd::TTriplet<NStd::TString, unsigned long long
     }
 }
 
-unsigned long long Get_Max(NStd::TVector<NStd::TTriplet<NStd::TString, unsigned long long int>> const &arr) {
-    unsigned long long max = 0;
-    for(unsigned long long int i = 0; i < arr.Size(); ++i) {
-        if(arr[max].first.Size() < arr[i].first.Size()) {
-            max = i;
-        } else
-        if(arr[max].first.Size() > arr[i].first.Size()) {
-            continue;
-        } else {
-            for(unsigned long long int j = 0; j < arr[max].first.Size(); ++j) {
-                if(arr[i].first[j] < '0' || arr[i].first[j] > '9') {
-                    continue;
-                }
-                if((arr[i].first[j] - '0') > (arr[max].first[j] - '0')) {
-                    max = i;
-                    break;
-                } else
-                if((arr[i].first[j] - '0') < (arr[max].first[j] - '0')) {
-                    break;
-                }
-            }
-        }
-    }
-    return max;
-}
-
-void AddZero(NStd::TVector<NStd::TTriplet<NStd::TString, unsigned long long int>> &arr, const unsigned long long max) {
-    unsigned long long max_size = arr[max].first.Size();
+void AddZero(NStd::TVector<NStd::TTriplet<NStd::TString, unsigned long long int, NStd::TString *>> &arr) {
+    int max_size = 16;
     NStd::TString zero, plus;
     zero = "0";
     plus = "+";
@@ -62,7 +36,6 @@ void AddZero(NStd::TVector<NStd::TTriplet<NStd::TString, unsigned long long int>
         unsigned long long curr_size = arr[i].first.Size();
         if( curr_size < max_size) {
             arr[i].first[0] = '0';
-            arr[i].changed = max_size - curr_size;
             for(unsigned long long int j = 0; j < max_size - curr_size - 1; ++j) {
                 zero + arr[i].first;
                 arr[i].first = zero;
@@ -75,44 +48,38 @@ void AddZero(NStd::TVector<NStd::TTriplet<NStd::TString, unsigned long long int>
     }
 }
 
-void RemoveZero(NStd::TVector<NStd::TTriplet<NStd::TString, unsigned long long int>> &arr) {
-    NStd::TString output;
-    for(unsigned long long i = 0; i < arr.Size(); ++i) {
-        if (arr[i].changed != 0) {
-            output = "+";
-            for(int j = 1 + arr[i].changed; j < arr[i].first.Size(); ++j) {
-                output + arr[i].first[j];
-            }
-            arr[i].first = output;
-        }
+void RadixSort(NStd::TVector<NStd::TTriplet<NStd::TString, unsigned long long int, NStd::TString *>> &arr) {
+    AddZero(arr);
+    for(unsigned long long int i = 1; i <= 16; ++i) {
+        CountingSort(arr, 16, i);
     }
-}
-
-void RadixSort(NStd::TVector<NStd::TTriplet<NStd::TString, unsigned long long int>> &arr) {
-    unsigned long long max = Get_Max(arr);
-    AddZero(arr, max);
-    for(unsigned long long int i = 1; i <= arr[max].first.Size(); ++i) {
-        CountingSort(arr, arr[max].first.Size(), i);
-    }
-    RemoveZero(arr);
 }
 
 int main() {
     std::ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
     std::cout.tie(nullptr);
-    NStd::TVector<NStd::TTriplet<NStd::TString, unsigned long long int>> arr;
-    NStd::TTriplet<NStd::TString, unsigned long long int> p;
+    NStd::TVector<NStd::TTriplet<NStd::TString, unsigned long long int, NStd::TString *>> arr;
+    NStd::TTriplet<NStd::TString, unsigned long long int, NStd::TString *> p;
+    NStd::TVector<NStd::TString> value;
     char * temp = new char[17];
     while(std::cin >> temp >> p.second){
         p.first = temp;
+        value.PushBack(temp);
         arr.PushBack(p);
     }
+    for(int i = 0; i < value.Size(); ++i) {
+        arr[i].third = &value[i];
+    }
+    auto start = std::chrono::steady_clock::now();
     if(arr.Size() > 1) {
         RadixSort(arr);
-    }
+    } 
+    auto finish = std::chrono::steady_clock::now();
     for(unsigned long long int i = 0; i < arr.Size(); ++i){
-        std::cout << arr[i].first << "\t" << arr[i].second << std::endl;
+        std::cout << *arr[i].third << '\t' << arr[i].second << '\n';
     }
+    auto dur = finish - start;
+    std::cerr << "stable sort from std " << std::chrono::duration_cast<std::chrono::milliseconds>(dur).count() << " ms" << std::endl;
     delete [] temp;
 }
