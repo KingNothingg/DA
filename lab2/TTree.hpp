@@ -3,6 +3,7 @@
 
 #include<cstdlib>
 #include<cstring>
+#include<cstdio>
 #include<iostream>
 #include<fstream>
 #include<new>
@@ -10,14 +11,16 @@
 namespace NStd {
     const short MAX_KEY_LENGTH = 256;
     int StringCompare(const char *first, const char *second) {
-        while (*first) {
-            if (*first != *second) {
-                break;
+        if(first != nullptr && second != nullptr) {
+            while (*first) {
+                if (*first != *second) {
+                    break;
+                }
+                first++;
+                second++;
             }
-            first++;
-            second++;
-        }
-        return *(const unsigned char *) first - *(const unsigned char *) second;
+            return *(const unsigned char *) first - *(const unsigned char *) second;
+        } else return 0;
     }
     struct TNode {
         short balance = 0;
@@ -29,13 +32,13 @@ namespace NStd {
         TNode (char* _key, unsigned long long _value) {
             value = _value;
             key = new char[MAX_KEY_LENGTH + 1];
-            strncpy(key, _key, sizeof(char)*(MAX_KEY_LENGTH + 1));
+            memcpy(key, _key, sizeof(char)*(MAX_KEY_LENGTH + 1));
         }
         TNode (char *_key, unsigned long long _value, short _balance) {
             value = _value;
             balance = _balance;
             key = new char[MAX_KEY_LENGTH + 1];
-            strncpy(key, _key, sizeof(char)*(MAX_KEY_LENGTH + 1));
+            memcpy(key, _key, sizeof(char)*(MAX_KEY_LENGTH + 1));
         }
         ~TNode() {
             delete [] key;
@@ -60,8 +63,8 @@ namespace NStd {
         TNode *BigLeftRotation(TNode *node);
         TNode *BigRightRotation(TNode *node);
         TNode *DeleteHelper(TNode *node, TNode *rNode);
-        void SaveHelper(TNode *node, std::ostream& os);
-        TNode *LoadHelper(std::istream& is);
+        void SaveHelper(TNode *node, FILE *os);
+        TNode *LoadHelper(FILE *is);
         TNode *Insert (char* key, unsigned long long value, TNode* node);
         TNode *Delete(char *key, TNode *node);
         TNode *Search(char *key, TNode *node);
@@ -180,40 +183,13 @@ namespace NStd {
         root = Insert(key, value, root);
     }
     TNode* TTree::Insert (char *key, unsigned long long value, TNode* node) {
-        if (StringCompare(node->key, key) > 0 && node->left == nullptr) {
-            try {
-                node->left = new TNode(key, value);
-                if(!stopBalancing) {
-                    node->balance += 1;
-                    if(node->balance == 0) {
-                        stopBalancing = true;
-                    }
-                }
-                std::cout << "OK\n";
-            }
-            catch (std::bad_alloc& e) {
-                std::cout << "ERROR: No memory\n";
-                exit(-1);
-            }
-        } else
-        if (StringCompare(node->key, key) < 0 && node->right == nullptr) {
-            try {
-                node->right = new TNode(key, value);
-                if(!stopBalancing) {
-                    node->balance -= 1;
-                    if(node->balance == 0) {
-                        stopBalancing = true;
-                    }
-                }
-                std::cout << "OK\n";
-            }
-            catch (std::bad_alloc& e) {
-                std::cout << "ERROR: No memory\n";
-                exit(-1);
-            }
+        if (node == nullptr) {
+            node = new TNode(key, value);
+            std::cout << "OK\n";
             return node;
-        } else
-        if (StringCompare(node->key, key) > 0 && node->left != nullptr) {
+        }
+        short comparedStrings = StringCompare(node->key, key);
+        if (comparedStrings > 0) {
             node->left = Insert(key, value, node->left);
             if(!stopBalancing) {
                 node->balance += 1;
@@ -222,7 +198,7 @@ namespace NStd {
                 }
             }
         } else
-        if (StringCompare(node->key, key) < 0 && node->right != nullptr) {
+        if (comparedStrings < 0) {
             node->right = Insert(key, value, node->right);
             if (!stopBalancing) {
                 node->balance -= 1;
@@ -230,15 +206,16 @@ namespace NStd {
                     stopBalancing = true;
                 }
             }
-        } else
-        if (StringCompare(node->key, key) == 0) {
+        } else {
             stopBalancing = true;
             std::cout << "Exist\n";
             return node;
         }
-        node = Balance(node);
-        if(node->balance == 0) {
-            stopBalancing = true;
+        if(node->balance == 2 || node->balance == -2) {
+            node = Balance(node);
+            if(node->balance == 0) {
+                stopBalancing = true;
+            }
         }
         return node;
     }
@@ -257,9 +234,14 @@ namespace NStd {
             delete rNode;
             rNode = rightChild;
         }
-        rNode = Balance(rNode);
-        if(rNode != nullptr && rNode->balance != 0) {
-            stopBalancing = true;
+        if(rNode == nullptr) {
+            return rNode;
+        }
+        if(rNode->balance == 2 || rNode->balance == -2) {
+            rNode = Balance(rNode);
+            if(rNode->balance != 0) {
+                stopBalancing = true;
+            }
         }
         return rNode;
     }
@@ -280,21 +262,21 @@ namespace NStd {
             std::cout << "NoSuchWord\n";
             return nullptr;
         }
-        if (StringCompare(node->key, key) < 0) {
+        short comparedStrings = StringCompare(node->key, key);
+        if (comparedStrings < 0) {
             node->right = Delete(key, node->right);
             if(!stopBalancing) {
                 node->balance += 1;
                 if(node->balance == 1) { stopBalancing = true; }
             }
         } else
-        if (StringCompare(node->key, key) > 0) {
+        if (comparedStrings > 0) {
             node->left = Delete(key, node->left);
             if(!stopBalancing) {
                 node->balance -= 1;
                 if(node->balance == -1) { stopBalancing = true; }
             }
-        } else
-        if (StringCompare(node->key, key) == 0) {
+        } else {
             TNode *leftChild = node->left;
             TNode *rightChild = node->right;
             if(leftChild == nullptr && rightChild == nullptr) {
@@ -319,9 +301,11 @@ namespace NStd {
             }
             std::cout << "OK\n";
         }
-        node = Balance(node);
-        if(node->balance != 0) {
-            stopBalancing = true;
+        if(node->balance == 2 || node->balance == -2) {
+            node = Balance(node);
+            if(node->balance != 0) {
+                stopBalancing = true;
+            }
         }
         return node;
     }
@@ -340,13 +324,14 @@ namespace NStd {
         if(node == nullptr) {
             return nullptr;
         }
-        if(StringCompare(node->key, key) == 0) {
+        short comparedStrings = StringCompare(node->key, key);
+        if(comparedStrings == 0) {
             return node;
         }
-        else if(StringCompare(node->key, key) < 0) {
+        else if(comparedStrings < 0) {
             return Search(key, node->right);
         }
-        else if(StringCompare(node->key, key) > 0) {
+        else if(comparedStrings > 0) {
             return Search(key, node->left);
         } else {
             return nullptr;
@@ -359,47 +344,34 @@ namespace NStd {
             DeleteTree(node->right);
             delete node;
         }
-        return;
     }
     bool stopSaving;
     void TTree::Save(char *path) {
         stopSaving = false;
-        std::ofstream os;
-        os.open(path, std::ios::binary | std::ios::out);
-        if(os.fail()) {
+        FILE *os;
+        if((os = fopen(path, "wb")) == nullptr) {
             std::cerr << "ERROR: Unable to open file in write mode\n";
             stopSaving = true;
             return;
         }
         SaveHelper(root, os);
-        os.close();
+        fclose(os);
         if (!stopSaving) {
             std::cout << "OK\n";
         }
     }
-    void TTree::SaveHelper(TNode *node, std::ostream &os) {
+    void TTree::SaveHelper(TNode *node, FILE *os) {
         if(stopSaving) { return; }
         short keyLength;
-        if (node == nullptr) { return; }
+        if (node == nullptr) {
+            keyLength = -1;
+            fwrite(&keyLength, sizeof(short), 1, os);
+            return;
+        }
         keyLength = strlen(node->key);
-        os.write((char*)&keyLength, sizeof(short));
-        if (os.fail()) {
-            std::cerr << "ERROR: Unable to save in file\n";
-            stopSaving = true;
-            return;
-        }
-        os.write(node->key, sizeof(char) * keyLength);
-        if (os.fail()) {
-            std::cerr << "ERROR: Unable to save in file\n";
-            stopSaving = true;
-            return;
-        }
-        os.write((char*)&(node->value), sizeof(unsigned long long));
-        if (os.fail()) {
-            std::cerr << "ERROR: Unable to save in file\n";
-            stopSaving = true;
-            return;
-        }
+        fwrite(&keyLength, sizeof(short), 1, os);
+        fwrite(node->key, sizeof(char), keyLength, os);
+        fwrite(&node->value, sizeof(unsigned long long), 1, os);
         char nodeBalance;
         if (node->balance == -1) {
             nodeBalance = '0';
@@ -410,111 +382,55 @@ namespace NStd {
         if (node->balance == 1) {
             nodeBalance = '2';
         }
-        os.write((char*)&(nodeBalance), sizeof(char));
-        if (os.fail()) {
-            std::cerr << "ERROR: Unable to save in file\n";
-            stopSaving = true;
-            return;
-        }
-        bool hasLeftChild = node->left != nullptr;
-        bool hasRightChild = node->right != nullptr;
-        os.write((char*)&hasLeftChild, sizeof(bool));
-        os.write((char*)&hasRightChild, sizeof(bool));
-        if(hasLeftChild){
-            SaveHelper(node->left, os);
-        }
-        if(hasRightChild){
-            SaveHelper(node->right, os);
-        }
+        fwrite(&nodeBalance, sizeof(char), 1, os);
+        SaveHelper(node->left, os);
+        SaveHelper(node->right, os);
     }
     bool stopLoading;
     void TTree::Load(char *path) {
         stopLoading = false;
-        std::ifstream is;
-        is.open(path, std::ios::binary | std::ios::in);
-        if(is.fail()) {
+        FILE *is;
+        if((is = fopen(path, "rb")) == nullptr) {
             std::cerr << "ERROR: Unable to open file read mode\n";
             stopLoading = true;
             return;
         }
         DeleteTree(root);
-        root = nullptr;
         root = LoadHelper(is);
-        is.close();
+        fclose(is);
         if(!stopLoading) {
             std::cout << "OK\n";
-        } else {
-            std::cout << "ERROR: Can't load\n";
         }
     }
 
-    TNode *TTree::LoadHelper(std::istream &is) {
+    TNode *TTree::LoadHelper(FILE *is) {
         if(stopLoading) { return nullptr; }
         TNode *nNode;
         short keyLength = 0;
-        is.read((char*)&keyLength, sizeof(short));
-        if (is.gcount() == 0) {
+        if (fread(&keyLength, sizeof(short), 1, is) == 0) {
             return nullptr;
-            stopLoading = true;
         }
-        if (is.fail()) {
-            std::cerr << "ERROR: Unable to load from file\n";
-            stopLoading = true;
+        if (keyLength == -1) {
             return nullptr;
         }
         char nodeBalance;
         char *nodeKey = new char[MAX_KEY_LENGTH + 1];
         unsigned long long nodeValue;
-        is.read(nodeKey, keyLength);
+        fread(nodeKey, sizeof(char), keyLength, is);
         nodeKey[keyLength] = '\0';
-        if (is.fail()) {
-            std::cerr << "ERROR: Unable to load from file\n";
-            stopLoading = true;
-            return nullptr;
-        }
-        nodeKey[keyLength] = '\0';
-        is.read((char*)&nodeValue, sizeof(unsigned long long));
-        if (is.fail()) {
-            std::cerr << "ERROR: Unable to load from file\n";
-            stopLoading = true;
-            return nullptr;
-        }
-
-        is.read((char*)&nodeBalance, sizeof(char));
-        if (is.fail()) {
-            std::cerr << "ERROR: Unable to load from file\n";
-            stopLoading = true;
-            return nullptr;
-        }
+        fread(&nodeValue, sizeof(unsigned long long), 1, is);
+        fread(&nodeBalance, sizeof(char), 1, is);
         if (nodeBalance > '2' || nodeBalance < '0') {
             std::cerr << "ERROR: Wrong file format\n";
             stopLoading = true;
             return nullptr;
         }
         nNode = new TNode(nodeKey, nodeValue,nodeBalance - '0' - 1);
-        bool hasLeftChild;
-        bool hasRightChild;
-        is.read((char*)&hasLeftChild, sizeof(bool));
-        if (is.fail()) {
-            std::cerr << "ERROR: Unable to load from file\n";
-            stopLoading = true;
-            return nullptr;
-        }
-        is.read((char*)&hasRightChild, sizeof(bool));
-        if (is.fail()) {
-            std::cerr << "ERROR: Unable to load from file\n";
-            stopLoading = true;
-            return nullptr;
-        }
-        if(hasLeftChild) {
-            nNode->left = LoadHelper(is);
-        } else { nNode->left = nullptr; }
-        if(hasRightChild) {
-            nNode->right = LoadHelper(is);
-        } else { nNode->right = nullptr; }
+        nNode->left = LoadHelper(is);
+        nNode->right = LoadHelper(is);
         delete [] nodeKey;
         return nNode;
     }
 }
 
-#endif //DALAB2_TAVLTREE_H
+#endif
