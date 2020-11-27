@@ -9,19 +9,22 @@ int main() {
     NStd::TTree root;
     char *cmd = new char[NStd::MAX_KEY_LENGTH + 1];
     char *key = new char[NStd::MAX_KEY_LENGTH + 1];
+    short keyLen = 0;
     unsigned long  long  value;
     char *fileName = new char[NStd::MAX_KEY_LENGTH + 1];
     while(std::cin >> cmd) {
         if(NStd::StringCompare(cmd, "+") == 0) {
             std::cin >> key >> value;
-            for(int i = 0; i < strlen(key); ++i) {
+            keyLen = strlen(key);
+            for(int i = 0; i < keyLen; ++i) {
                 key[i] = (char)tolower(key[i]);
             }
             root.Insert(key, value);
         } else
         if(NStd::StringCompare(cmd, "-") == 0) {
             std::cin >> key;
-            for(int i = 0; i < strlen(key); ++i) {
+            keyLen = strlen(key);
+            for(int i = 0; i < keyLen; ++i) {
                 key[i] = (char)tolower(key[i]);
             }
             root.Delete(key);
@@ -36,7 +39,8 @@ int main() {
             }
         }
         else {
-            for(int i = 0; i < strlen(cmd); ++i) {
+            keyLen = strlen(cmd);
+            for(int i = 0; i < keyLen; ++i) {
                 cmd[i] = (char)tolower(cmd[i]);
             }
             root.Search(cmd);
