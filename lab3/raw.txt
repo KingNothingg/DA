@@ -1,0 +1,170 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total
+ time   seconds   seconds    calls  us/call  us/call  name
+ 25.02      0.02     0.02     1226    16.32    16.32  NStd::TTree::DeleteTree(NStd::TNode*)
+ 25.02      0.04     0.02     1201    16.66    16.66  NStd::TTree::SaveHelper(NStd::TNode*, _IO_FILE*)
+ 12.51      0.05     0.01    91598     0.11     0.11  NStd::StringCompare(char const*, char const*)
+ 12.51      0.06     0.01     1225     8.17     8.17  NStd::TTree::LoadHelper(_IO_FILE*)
+ 12.51      0.07     0.01                             frame_dummy
+ 12.51      0.08     0.01                             main
+  0.00      0.08     0.00   724665     0.00     0.00  NStd::TNode::~TNode()
+  0.00      0.08     0.00   722150     0.00     0.00  NStd::TNode::TNode(char*, unsigned long long, short)
+  0.00      0.08     0.00     2554     0.00     0.98  NStd::TTree::Delete(char*)
+  0.00      0.08     0.00     2554     0.00     0.98  NStd::TTree::Delete(char*, NStd::TNode*)
+  0.00      0.08     0.00     2515     0.00     0.00  NStd::TNode::TNode(char*, unsigned long long)
+  0.00      0.08     0.00     2515     0.00     0.98  NStd::TTree::Insert(char*, unsigned long long)
+  0.00      0.08     0.00     2514     0.00     0.98  NStd::TTree::Insert(char*, unsigned long long, NStd::TNode*)
+  0.00      0.08     0.00     2503     0.00     0.92  NStd::TTree::Search(char*)
+  0.00      0.08     0.00     2503     0.00     0.92  NStd::TTree::Search(char*, NStd::TNode*)
+  0.00      0.08     0.00     1241     0.00     0.00  NStd::TTree::Balance(NStd::TNode*)
+  0.00      0.08     0.00     1225     0.00    24.49  NStd::TTree::Load(char*)
+  0.00      0.08     0.00     1201     0.00    16.66  NStd::TTree::Save(char*)
+  0.00      0.08     0.00      938     0.00     0.00  NStd::TTree::RotateLeft(NStd::TNode*)
+  0.00      0.08     0.00      921     0.00     0.00  NStd::TTree::RotateRight(NStd::TNode*)
+  0.00      0.08     0.00      323     0.00     0.00  NStd::TTree::BigLeftRotation(NStd::TNode*)
+  0.00      0.08     0.00      295     0.00     0.00  NStd::TTree::BigRightRotation(NStd::TNode*)
+  0.00      0.08     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN4NStd13StringCompareEPKcS1_
+  0.00      0.08     0.00        1     0.00     0.00  __static_initialization_and_destruction_0(int, int)
+  0.00      0.08     0.00        1     0.00     0.00  NStd::TTree::TTree()
+  0.00      0.08     0.00        1     0.00    16.32  NStd::TTree::~TTree() 
+
+   
+                         Call graph (explanation follows)
+
+
+granularity: each sample hit covers 2 byte(s) for 12.49% of 0.08 seconds
+
+index % time    self  children    called     name
+                                                 <spontaneous>
+[1]     87.5    0.01    0.06                 main [1]
+                0.00    0.03    1225/1225        NStd::TTree::Load(char*) [2]
+                0.00    0.02    1201/1201        NStd::TTree::Save(char*) [5]
+                0.00    0.00   24836/91598       NStd::StringCompare(char const*, char const*) [7]
+                0.00    0.00    2554/2554        NStd::TTree::Delete(char*) [9]
+                0.00    0.00    2515/2515        NStd::TTree::Insert(char*, unsigned long long) [11]
+                0.00    0.00    2503/2503        NStd::TTree::Search(char*) [13]
+                0.00    0.00       1/1           NStd::TTree::~TTree() [15]
+                0.00    0.00       1/1           NStd::TTree::TTree() [31]
+-----------------------------------------------
+                0.00    0.03    1225/1225        main [1]
+[2]     37.5    0.00    0.03    1225         NStd::TTree::Load(char*) [2]
+                0.02    0.00    1225/1226        NStd::TTree::DeleteTree(NStd::TNode*) [3]
+                0.01    0.00    1225/1225        NStd::TTree::LoadHelper(_IO_FILE*) [8]
+-----------------------------------------------
+                             1449330             NStd::TTree::DeleteTree(NStd::TNode*) [3]
+                0.00    0.00       1/1226        NStd::TTree::~TTree() [15]
+                0.02    0.00    1225/1226        NStd::TTree::Load(char*) [2]
+[3]     25.0    0.02    0.00    1226+1449330 NStd::TTree::DeleteTree(NStd::TNode*) [3]
+                0.00    0.00  724665/724665      NStd::TNode::~TNode() [21]
+                             1449330             NStd::TTree::DeleteTree(NStd::TNode*) [3]
+-----------------------------------------------
+                             1345794             NStd::TTree::SaveHelper(NStd::TNode*, _IO_FILE*) [4]
+                0.02    0.00    1201/1201        NStd::TTree::Save(char*) [5]
+[4]     25.0    0.02    0.00    1201+1345794 NStd::TTree::SaveHelper(NStd::TNode*, _IO_FILE*) [4]
+                             1345794             NStd::TTree::SaveHelper(NStd::TNode*, _IO_FILE*) [4]
+-----------------------------------------------
+                0.00    0.02    1201/1201        main [1]
+[5]     25.0    0.00    0.02    1201         NStd::TTree::Save(char*) [5]
+                0.02    0.00    1201/1201        NStd::TTree::SaveHelper(NStd::TNode*, _IO_FILE*) [4]
+-----------------------------------------------
+                                                 <spontaneous>
+[6]     12.5    0.01    0.00                 frame_dummy [6]
+-----------------------------------------------
+                0.00    0.00   21170/91598       NStd::TTree::Search(char*, NStd::TNode*) [14]
+                0.00    0.00   22665/91598       NStd::TTree::Insert(char*, unsigned long long, NStd::TNode*) [12]
+                0.00    0.00   22927/91598       NStd::TTree::Delete(char*, NStd::TNode*) [10]
+                0.00    0.00   24836/91598       main [1]
+[7]     12.5    0.01    0.00   91598         NStd::StringCompare(char const*, char const*) [7]
+-----------------------------------------------
+                             1444300             NStd::TTree::LoadHelper(_IO_FILE*) [8]
+                0.01    0.00    1225/1225        NStd::TTree::Load(char*) [2]
+[8]     12.5    0.01    0.00    1225+1444300 NStd::TTree::LoadHelper(_IO_FILE*) [8]
+                0.00    0.00  722150/722150      NStd::TNode::TNode(char*, unsigned long long, short) [22]
+                             1444300             NStd::TTree::LoadHelper(_IO_FILE*) [8]
+-----------------------------------------------
+                0.00    0.00    2554/2554        main [1]
+[9]      3.1    0.00    0.00    2554         NStd::TTree::Delete(char*) [9]
+                0.00    0.00    2554/2554        NStd::TTree::Delete(char*, NStd::TNode*) [10]
+-----------------------------------------------
+                               22927             NStd::TTree::Delete(char*, NStd::TNode*) [10]
+                0.00    0.00    2554/2554        NStd::TTree::Delete(char*) [9]
+[10]     3.1    0.00    0.00    2554+22927   NStd::TTree::Delete(char*, NStd::TNode*) [10]
+                0.00    0.00   22927/91598       NStd::StringCompare(char const*, char const*) [7]
+                               22927             NStd::TTree::Delete(char*, NStd::TNode*) [10]
+-----------------------------------------------
+                0.00    0.00    2515/2515        main [1]
+[11]     3.1    0.00    0.00    2515         NStd::TTree::Insert(char*, unsigned long long) [11]
+                0.00    0.00    2514/2514        NStd::TTree::Insert(char*, unsigned long long, NStd::TNode*) [12]
+                0.00    0.00       1/2515        NStd::TNode::TNode(char*, unsigned long long) [23]
+-----------------------------------------------
+                               22665             NStd::TTree::Insert(char*, unsigned long long, NStd::TNode*) [12]
+                0.00    0.00    2514/2514        NStd::TTree::Insert(char*, unsigned long long) [11]
+[12]     3.1    0.00    0.00    2514+22665   NStd::TTree::Insert(char*, unsigned long long, NStd::TNode*) [12]
+                0.00    0.00   22665/91598       NStd::StringCompare(char const*, char const*) [7]
+                0.00    0.00    2514/2515        NStd::TNode::TNode(char*, unsigned long long) [23]
+                0.00    0.00    1241/1241        NStd::TTree::Balance(NStd::TNode*) [24]
+                               22665             NStd::TTree::Insert(char*, unsigned long long, NStd::TNode*) [12]
+-----------------------------------------------
+                0.00    0.00    2503/2503        main [1]
+[13]     2.9    0.00    0.00    2503         NStd::TTree::Search(char*) [13]
+                0.00    0.00    2503/2503        NStd::TTree::Search(char*, NStd::TNode*) [14]
+-----------------------------------------------
+                               19938             NStd::TTree::Search(char*, NStd::TNode*) [14]
+                0.00    0.00    2503/2503        NStd::TTree::Search(char*) [13]
+[14]     2.9    0.00    0.00    2503+19938   NStd::TTree::Search(char*, NStd::TNode*) [14]
+                0.00    0.00   21170/91598       NStd::StringCompare(char const*, char const*) [7]
+                               19938             NStd::TTree::Search(char*, NStd::TNode*) [14]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[15]     0.0    0.00    0.00       1         NStd::TTree::~TTree() [15]
+                0.00    0.00       1/1226        NStd::TTree::DeleteTree(NStd::TNode*) [3]
+-----------------------------------------------
+                0.00    0.00  724665/724665      NStd::TTree::DeleteTree(NStd::TNode*) [3]
+[21]     0.0    0.00    0.00  724665         NStd::TNode::~TNode() [21]
+-----------------------------------------------
+                0.00    0.00  722150/722150      NStd::TTree::LoadHelper(_IO_FILE*) [8]
+[22]     0.0    0.00    0.00  722150         NStd::TNode::TNode(char*, unsigned long long, short) [22]
+-----------------------------------------------
+                0.00    0.00       1/2515        NStd::TTree::Insert(char*, unsigned long long) [11]
+                0.00    0.00    2514/2515        NStd::TTree::Insert(char*, unsigned long long, NStd::TNode*) [12]
+[23]     0.0    0.00    0.00    2515         NStd::TNode::TNode(char*, unsigned long long) [23]
+-----------------------------------------------
+                0.00    0.00    1241/1241        NStd::TTree::Insert(char*, unsigned long long, NStd::TNode*) [12]
+[24]     0.0    0.00    0.00    1241         NStd::TTree::Balance(NStd::TNode*) [24]
+                0.00    0.00     323/323         NStd::TTree::BigLeftRotation(NStd::TNode*) [27]
+                0.00    0.00     320/938         NStd::TTree::RotateLeft(NStd::TNode*) [25]
+                0.00    0.00     303/921         NStd::TTree::RotateRight(NStd::TNode*) [26]
+                0.00    0.00     295/295         NStd::TTree::BigRightRotation(NStd::TNode*) [28]
+-----------------------------------------------
+                0.00    0.00     295/938         NStd::TTree::BigRightRotation(NStd::TNode*) [28]
+                0.00    0.00     320/938         NStd::TTree::Balance(NStd::TNode*) [24]
+                0.00    0.00     323/938         NStd::TTree::BigLeftRotation(NStd::TNode*) [27]
+[25]     0.0    0.00    0.00     938         NStd::TTree::RotateLeft(NStd::TNode*) [25]
+-----------------------------------------------
+                0.00    0.00     295/921         NStd::TTree::BigRightRotation(NStd::TNode*) [28]
+                0.00    0.00     303/921         NStd::TTree::Balance(NStd::TNode*) [24]
+                0.00    0.00     323/921         NStd::TTree::BigLeftRotation(NStd::TNode*) [27]
+[26]     0.0    0.00    0.00     921         NStd::TTree::RotateRight(NStd::TNode*) [26]
+-----------------------------------------------
+                0.00    0.00     323/323         NStd::TTree::Balance(NStd::TNode*) [24]
+[27]     0.0    0.00    0.00     323         NStd::TTree::BigLeftRotation(NStd::TNode*) [27]
+                0.00    0.00     323/921         NStd::TTree::RotateRight(NStd::TNode*) [26]
+                0.00    0.00     323/938         NStd::TTree::RotateLeft(NStd::TNode*) [25]
+-----------------------------------------------
+                0.00    0.00     295/295         NStd::TTree::Balance(NStd::TNode*) [24]
+[28]     0.0    0.00    0.00     295         NStd::TTree::BigRightRotation(NStd::TNode*) [28]
+                0.00    0.00     295/938         NStd::TTree::RotateLeft(NStd::TNode*) [25]
+                0.00    0.00     295/921         NStd::TTree::RotateRight(NStd::TNode*) [26]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [38]
+[29]     0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN4NStd13StringCompareEPKcS1_ [29]
+                0.00    0.00       1/1           __static_initialization_and_destruction_0(int, int) [30]
+-----------------------------------------------
+                0.00    0.00       1/1           _GLOBAL__sub_I__ZN4NStd13StringCompareEPKcS1_ [29]
+[30]     0.0    0.00    0.00       1         __static_initialization_and_destruction_0(int, int) [30]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[31]     0.0    0.00    0.00       1         NStd::TTree::TTree() [31]
+-----------------------------------------------
